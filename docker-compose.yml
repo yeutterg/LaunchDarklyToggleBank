@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      # LaunchDarkly Configuration
+      - NEXT_PUBLIC_LD_CLIENT_KEY=${NEXT_PUBLIC_LD_CLIENT_KEY}
+      - LD_SDK_KEY=${LD_SDK_KEY}
+      - LD_API_KEY=${LD_API_KEY}
+      - DESTINATIONENV=${DESTINATIONENV:-production}
+      - PROJECT_KEY=${PROJECT_KEY}
+      # Database Configuration
+      - DB_URL=${DB_URL}
+      # AWS Configuration (for Bedrock integration)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-west-2}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-togglebank}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data: 
