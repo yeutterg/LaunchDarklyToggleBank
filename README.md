@@ -121,10 +121,12 @@ docker-compose exec postgres psql -U postgres -d togglebank
 
 6. **AWS Bedrock issues**: If you see "I'm sorry. Please try again." for AI requests:
    - Ensure `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are set in your `.env` file
+   - **Important**: Use permanent AWS credentials, not temporary ones (avoid keys starting with "ASIA")
    - Verify your AWS credentials have Bedrock permissions
    - Check that `AWS_DEFAULT_REGION` is set to a region that supports Bedrock (e.g., us-west-2, us-east-1)
    - Ensure your AWS account has access to the Bedrock service
    - Check the application logs: `docker-compose logs app`
+   - **Common issue**: If you see "security token included in the request is invalid", your AWS credentials have expired
 
 7. **LaunchDarkly configuration**: If AI features aren't working:
    - Verify all LaunchDarkly environment variables are set correctly
@@ -136,15 +138,24 @@ docker-compose exec postgres psql -U postgres -d togglebank
 To test if your AWS Bedrock setup is working correctly:
 
 ```bash
+# Validate AWS credentials first
+node validate-aws-credentials.js
+
 # Test Bedrock connection
 node test-bedrock.js
 ```
 
-This script will:
+**validate-aws-credentials.js** will:
 - Check if all required AWS environment variables are set
+- Detect if you're using temporary credentials (which expire)
+- Test AWS credentials with STS
+- Verify Bedrock permissions
+- Provide specific guidance for common issues
+
+**test-bedrock.js** will:
 - Test the connection to AWS Bedrock
-- Provide specific error messages for common issues
 - Verify that your credentials have the necessary permissions
+- Test a simple Bedrock API call
 
 ### Option 2: Local Development (For Development Only)
 

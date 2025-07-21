@@ -78,6 +78,10 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
                 errorMessage = "AI model not configured";
             } else if (error.message.includes("AI config messages are undefined or empty")) {
                 errorMessage = "AI prompt configuration is missing";
+            } else if (error.message.includes("security token included in the request is invalid")) {
+                errorMessage = "AWS credentials are invalid or expired. Please check your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY";
+            } else if (error.message.includes("UnrecognizedClientException")) {
+                errorMessage = "AWS credentials are invalid or expired. Please update your AWS credentials in the .env file";
             } else {
                 errorMessage = error.message;
             }
