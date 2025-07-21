@@ -121,9 +121,9 @@ docker-compose exec postgres psql -U postgres -d togglebank
 
 6. **AWS Bedrock issues**: If you see "I'm sorry. Please try again." for AI requests:
    - Ensure `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are set in your `.env` file
-   - **Important**: Use permanent AWS credentials, not temporary ones (avoid keys starting with "ASIA")
+   - **For temporary credentials**: Also set `AWS_SESSION_TOKEN` (required for ASIA-prefixed keys)
    - Verify your AWS credentials have Bedrock permissions
-   - Check that `AWS_DEFAULT_REGION` is set to a region that supports Bedrock (e.g., us-west-2, us-east-1)
+   - Check that `AWS_DEFAULT_REGION` is set to a region that supports Bedrock (e.g., us-east-1, us-west-2)
    - Ensure your AWS account has access to the Bedrock service
    - Check the application logs: `docker-compose logs app`
    - **Common issue**: If you see "security token included in the request is invalid", your AWS credentials have expired

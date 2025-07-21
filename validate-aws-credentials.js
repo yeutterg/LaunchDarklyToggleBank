@@ -9,6 +9,7 @@ async function validateAWSCredentials() {
     // Check environment variables
     const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
     const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+    const sessionToken = process.env.AWS_SESSION_TOKEN;
     const region = process.env.AWS_DEFAULT_REGION || process.env.AWS_REGION;
 
     if (!accessKeyId || !secretAccessKey) {
@@ -26,14 +27,14 @@ async function validateAWSCredentials() {
 
     // Check if credentials are temporary
     if (accessKeyId.startsWith('ASIA')) {
-        console.warn("\n⚠️  WARNING: You're using temporary AWS credentials!");
-        console.warn("   Temporary credentials (starting with 'ASIA') expire and will cause errors.");
-        console.warn("   Please use permanent AWS credentials instead.");
-        console.log("\n💡 To get permanent credentials:");
-        console.log("   1. Go to AWS IAM Console");
-        console.log("   2. Create a new IAM user or use an existing one");
-        console.log("   3. Create an Access Key ID and Secret Access Key");
-        console.log("   4. Attach the 'AmazonBedrockFullAccess' policy");
+        console.log("\nℹ️  Using temporary AWS credentials (ASIA prefix)");
+        console.log("   Make sure you have AWS_SESSION_TOKEN set in your .env file");
+        
+        if (!process.env.AWS_SESSION_TOKEN) {
+            console.warn("⚠️  WARNING: AWS_SESSION_TOKEN is not set!");
+            console.warn("   Temporary credentials require a session token.");
+            console.log("\n💡 Add AWS_SESSION_TOKEN to your .env file");
+        }
     }
 
     // Test credentials with STS
@@ -41,10 +42,11 @@ async function validateAWSCredentials() {
         console.log("\n🔄 Testing AWS credentials...");
         
         const stsClient = new STSClient({
-            region: region || 'us-west-2',
+            region: region || 'us-east-1',
             credentials: {
                 accessKeyId,
                 secretAccessKey,
+                sessionToken,
             },
         });
 
@@ -61,10 +63,11 @@ async function validateAWSCredentials() {
         
         const { BedrockRuntimeClient, ConverseCommand } = require("@aws-sdk/client-bedrock-runtime");
         const bedrockClient = new BedrockRuntimeClient({
-            region: region || 'us-west-2',
+            region: region || 'us-east-1',
             credentials: {
                 accessKeyId,
                 secretAccessKey,
+                sessionToken,
             },
         });
 
