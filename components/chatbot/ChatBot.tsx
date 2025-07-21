@@ -65,16 +65,32 @@ function ChatBotInterface({
 			userInput: userInput,
 		};
 
-		const response = await fetch("/api/chat", {
-			method: "POST",
-			body: JSON.stringify(userInputRes),
-		});
+		try {
+			const response = await fetch("/api/chat", {
+				method: "POST",
+				body: JSON.stringify(userInputRes),
+			});
 
-		const data: ChatBotAIApiResponseInterface = await response.json();
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
 
-		applyChatBotNewMessage(data);
+			const data: ChatBotAIApiResponseInterface = await response.json();
 
-		setIsLoading(false);
+			applyChatBotNewMessage(data);
+		} catch (error) {
+			console.error("Error in submitChatBotQuery:", error);
+			// Handle the error by showing a user-friendly message
+			const errorResponse: ChatBotAIApiResponseInterface = {
+				response: "I'm sorry. Please try again.",
+				modelName: "",
+				enabled: false,
+				error: error instanceof Error ? error.message : "Unknown error occurred"
+			};
+			applyChatBotNewMessage(errorResponse);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const sendChatbotFeedback = async (feedback: string) => {

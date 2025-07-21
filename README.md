@@ -119,6 +119,33 @@ docker-compose exec postgres psql -U postgres -d togglebank
 
 5. **View logs**: Use `docker-compose logs -f` to see real-time logs from all services
 
+6. **AWS Bedrock issues**: If you see "I'm sorry. Please try again." for AI requests:
+   - Ensure `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are set in your `.env` file
+   - Verify your AWS credentials have Bedrock permissions
+   - Check that `AWS_DEFAULT_REGION` is set to a region that supports Bedrock (e.g., us-west-2, us-east-1)
+   - Ensure your AWS account has access to the Bedrock service
+   - Check the application logs: `docker-compose logs app`
+
+7. **LaunchDarkly configuration**: If AI features aren't working:
+   - Verify all LaunchDarkly environment variables are set correctly
+   - Check that your LaunchDarkly project has the AI configuration flags set up
+   - Ensure your LaunchDarkly API keys have the necessary permissions
+
+#### Testing AWS Bedrock Configuration
+
+To test if your AWS Bedrock setup is working correctly:
+
+```bash
+# Test Bedrock connection
+node test-bedrock.js
+```
+
+This script will:
+- Check if all required AWS environment variables are set
+- Test the connection to AWS Bedrock
+- Provide specific error messages for common issues
+- Verify that your credentials have the necessary permissions
+
 ### Option 2: Local Development (For Development Only)
 
 For development with hot reloading and faster iteration:

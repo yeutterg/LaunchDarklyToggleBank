@@ -66,7 +66,29 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
         res.status(200).json(data);
     } catch (error) {
         console.error("Error sending request to Bedrock and getting a chat response:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        
+        // Provide more specific error messages based on the error type
+        let errorMessage = "Internal Server Error";
+        if (error instanceof Error) {
+            if (error.message.includes("AWS credentials are not set")) {
+                errorMessage = "AWS credentials not configured";
+            } else if (error.message.includes("AI config is disabled")) {
+                errorMessage = "AI configuration is disabled";
+            } else if (error.message.includes("AI model configuration is undefined")) {
+                errorMessage = "AI model not configured";
+            } else if (error.message.includes("AI config messages are undefined or empty")) {
+                errorMessage = "AI prompt configuration is missing";
+            } else {
+                errorMessage = error.message;
+            }
+        }
+        
+        res.status(500).json({ 
+            error: errorMessage,
+            response: "I'm sorry. Please try again.",
+            modelName: "",
+            enabled: false
+        });
     }
 }
 
