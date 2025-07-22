@@ -43,6 +43,12 @@ export interface ChatBotAIApiResponseInterface {
 	response: string;
 	enabled: boolean;
 	modelName: string;
+	// Hallucination tracker properties
+	hallucination_score?: number;
+	confidence_score?: number;
+	fact_check_passed?: boolean;
+	sources?: string[];
+	warnings?: string[];
 }
 
 export interface UserChatInputResponseInterface {

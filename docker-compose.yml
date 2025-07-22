@@ -40,5 +40,23 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  hallucination-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile.hallucination-tracker
+    ports:
+      - "8501:8501"
+    environment:
+      - LAUNCHDARKLY_SDK_KEY=${LD_SDK_KEY}
+      - LAUNCHDARKLY_AI_CONFIG_KEY=${LD_SDK_KEY}
+      - LAUNCHDARKLY_LLM_JUDGE_KEY=${LD_SDK_KEY}
+      - AWS_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data: 

@@ -48,6 +48,7 @@ This setup includes the ToggleBank app with a PostgreSQL database and all necess
 4. **Access the application**
    - ToggleBank App: http://localhost:3000
    - PostgreSQL Database: localhost:5432
+   - Hallucination Tracker: http://localhost:8501
 
 #### Environment Variables
 
@@ -133,6 +134,23 @@ docker-compose exec postgres psql -U postgres -d togglebank
    - Check that your LaunchDarkly project has the AI configuration flags set up
    - Ensure your LaunchDarkly API keys have the necessary permissions
 
+#### Hallucination Tracker Integration
+
+The ToggleBank demo now includes advanced AI hallucination detection powered by the [LaunchDarklyHallucinationTracker](https://github.com/yeutterg/LaunchDarklyHallucinationTracker). This service provides:
+
+- **Fact Checking**: Verifies AI responses against reliable sources
+- **Confidence Scoring**: Measures AI response confidence levels
+- **Hallucination Detection**: Identifies potential AI hallucinations
+- **Source Attribution**: Provides sources for AI responses
+- **Warning System**: Alerts users to potential issues
+
+The chatbot will now display:
+- AI confidence scores
+- Fact check results
+- Hallucination risk percentages
+- Source citations
+- Warning messages
+
 #### Testing AWS Bedrock Configuration
 
 To test if your AWS Bedrock setup is working correctly:
@@ -187,10 +205,10 @@ This approach gives you hot reloading while still using the containerized databa
 
 The ToggleBank demo showcases:
 - **Feature Flags**: LaunchDarkly integration for feature management
-- **AI Integration**: AWS Bedrock for AI-powered features
+- **AI Integration**: Advanced hallucination detection with [LaunchDarklyHallucinationTracker](https://github.com/yeutterg/LaunchDarklyHallucinationTracker)
 - **Database**: PostgreSQL with Drizzle ORM
 - **Frontend**: Next.js with React and Tailwind CSS
-- **Backend**: Next.js API routes
+- **Backend**: Next.js API routes with hallucination-aware responses
 
 ## Support
 

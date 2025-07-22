@@ -66,10 +66,10 @@ function ChatBotInterface({
 		};
 
 		try {
-			const response = await fetch("/api/chat", {
-				method: "POST",
-				body: JSON.stringify(userInputRes),
-			});
+					const response = await fetch("/api/hallucination-chat", {
+			method: "POST",
+			body: JSON.stringify(userInputRes),
+		});
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
@@ -135,9 +135,25 @@ function ChatBotInterface({
 		let aiAnswer: string =
 			chatBotResponse.response || "I'm sorry. Please try again.";
 
+		// Add hallucination tracker information if available
+		let enhancedContent = aiAnswer;
+		if (chatBotResponse.hallucination_score !== undefined) {
+			enhancedContent += `\n\n🤖 **AI Confidence**: ${Math.round((chatBotResponse.confidence_score || 0) * 100)}%`;
+			enhancedContent += `\n🔍 **Fact Check**: ${chatBotResponse.fact_check_passed ? '✅ Passed' : '❌ Failed'}`;
+			enhancedContent += `\n⚠️ **Hallucination Risk**: ${Math.round((chatBotResponse.hallucination_score || 0) * 100)}%`;
+			
+			if (chatBotResponse.sources && chatBotResponse.sources.length > 0) {
+				enhancedContent += `\n📚 **Sources**: ${chatBotResponse.sources.join(', ')}`;
+			}
+			
+			if (chatBotResponse.warnings && chatBotResponse.warnings.length > 0) {
+				enhancedContent += `\n⚠️ **Warnings**: ${chatBotResponse.warnings.join(', ')}`;
+			}
+		}
+
 		let assistantMessage: ChatBotMessageInterface = {
 			role: "assistant",
-			content: aiAnswer,
+			content: enhancedContent,
 			id: uuidv4().slice(0, 4),
 		};
 
